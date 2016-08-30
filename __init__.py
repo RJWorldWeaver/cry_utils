@@ -7,6 +7,7 @@
 # notes           :
 # python_version  :2.7
 # ==============================================================================
+from etree_xforms import *
 
 
 def get_prefab_objects_by_prefab_name(name, prefab_dir="D:/perforce/dev/GameSDK/Prefabs"):
@@ -30,13 +31,16 @@ def get_prefab_objects_by_prefab_name(name, prefab_dir="D:/perforce/dev/GameSDK/
     xml_path = os.path.normpath(os.path.join(prefab_dir, prefab_master + '.xml'))
 
     # if no file exists return false
-    if not os.path.exists(xml_path):
-        return False
+    try:
+        os.path.exists(xml_path)
+        # get the xml root from the file
+        with open(xml_path, 'r') as xml_file:
+            tree = ET.parse(xml_file).getroot()
+            return tree.findall("./Prefab[@Name='%s']/Objects/Object" % prefab_name)
+    except Exception, e:
+        # silently report this error for debugging purposes
+        print e
 
-    # get the xml root from the file
-    with open(xml_path, 'r') as xml_file:
-        tree = ET.parse(xml_file).getroot()
-        return tree.findall("./Prefab[@Name='%s']/Objects/Object" % prefab_name)
 
 
 def norm_path_for_ce(path, maintain_casing=True):
@@ -49,5 +53,3 @@ def norm_path_for_ce(path, maintain_casing=True):
     for idx, part in enumerate(split_path):
         if part == 'GameSDK':
             return '/'.join(split_path[idx + 1:]) if maintain_casing else '/'.join(split_path[idx + 1:]).lower()
-
-
