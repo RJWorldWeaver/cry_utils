@@ -52,7 +52,7 @@ class EiParser(object):
             try:
                 # start everything off but fail silently and log it if there is an error opening a particular file
                 self.parse_xml()
-            except Exception, e:
+            except Exception as e:
                 self.logger.error(e)
             # filter the file if it passes Etree parsing
             self.filter()
